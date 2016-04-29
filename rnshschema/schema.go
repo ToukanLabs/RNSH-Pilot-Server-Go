@@ -117,6 +117,76 @@ var fields = graphql.Fields{
 }
 var rootQuery = graphql.ObjectConfig{Name: "RootQuery", Fields: fields}
 
+var RootMutation = graphql.NewObject(graphql.ObjectConfig{
+	Name: "RNSHMutations",
+	Fields: graphql.Fields{
+		"createPatient": &graphql.Field{
+			Type:        patientSchemaType,
+			Description: "Create a new patient.",
+			Args: graphql.FieldConfigArgument{
+				"firstname": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Patient first name",
+				},
+				"surname": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Patient surname",
+				},
+				"gender": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Patient Gender, either MALE or FEMALE",
+				},
+				"dob": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Patient Date of birth",
+				},
+				"address": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Patients main contact address",
+				},
+				"mrn": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Medical Record Number used for patient identification at RNSH",
+				},
+				"tumorType": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Tumour Type Either Prostate, Breast or CNS",
+				},
+				"surgical": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "If a patient has had surgery on their tumour then true otherwise false",
+				},
+				"phone": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Patients phone number",
+				},
+				"email": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Patients email address",
+				},
+			},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				// marshall and cast the argument values
+				firstName, _ := params.Args["firstname"].(string)
+				surname, _ := params.Args["surname"].(string)
+				gender, _ := params.Args["gender"].(string)
+				dob, _ := params.Args["dob"].(string)
+				address, _ := params.Args["address"].(string)
+				mrn, _ := params.Args["mrn"].(string)
+				tumorType, _ := params.Args["tumorType"].(string)
+				surgical, _ := params.Args["surgical"].(string)
+				phone, _ := params.Args["phone"].(string)
+				email, _ := params.Args["email"].(string)
+
+				patientService := *services.GetPatientService()
+
+				return patientService.CreatePatient(firstName, surname, gender, dob, address, mrn, tumorType, surgical, phone, email), nil
+			},
+		},
+	},
+})
+
 var RnshSchema = graphql.SchemaConfig{
-	Query: graphql.NewObject(rootQuery),
+	Query:    graphql.NewObject(rootQuery),
+	Mutation: RootMutation,
 }

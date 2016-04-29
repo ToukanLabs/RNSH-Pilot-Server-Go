@@ -10,6 +10,8 @@ type PatientService interface {
 	GetAllPatients() []models.Patient
 	GetPatient(id int) models.Patient
 	GetEhrId(mrn string) string
+	CreatePatient(firstName string, surname string, gender string, dob string, address string, mrn string,
+		tumorType string, surgical string, phone string, email string) models.Patient
 }
 
 var currentPatientService PatientService
