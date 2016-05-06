@@ -12,6 +12,8 @@ import (
 
 	"bytes"
 
+	"sync"
+
 	"github.com/FiviumAustralia/RNSH-Pilot-Server-Go/models"
 )
 
@@ -132,12 +134,27 @@ func (oeps OpenEHRPatientService) GetAllPatients() []models.Patient {
 	var parties PartiesType
 	_ = json.Unmarshal(body, &parties)
 	var patients []models.Patient
-
+	wg := sync.WaitGroup{}
+	ch := make(chan models.Patient)
 	for _, p := range parties.Parties {
-		var patient models.Patient
-		partyToPatient(&p, &patient)
+		go func(party Party, c chan models.Patient) {
+			wg.Add(1)
+			defer wg.Done()
+			var patient models.Patient
+			partyToPatient(&party, &patient)
+			c <- patient
+		}(p, ch)
 
-		patients = append(patients, patient)
+	}
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	for c := range ch {
+		p := c
+		patients = append(patients, p)
 	}
 
 	return patients
