@@ -13,7 +13,7 @@ var allergiesSchemaType = graphql.NewObject(
 		Description: "Represent the allergies of a patient",
 		Fields: graphql.Fields{
 			"name": &graphql.Field{
-				Type:        graphql.Int,
+				Type:        graphql.String,
 				Description: "The name of the Allergy the patient has",
 			},
 			"date": &graphql.Field{

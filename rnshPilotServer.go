@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	rnshgraphql "github.com/FiviumAustralia/RNSH-Pilot-Server-Go/graphql"
 	"github.com/FiviumAustralia/RNSH-Pilot-Server-Go/rnshschema"
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql-go-handler"
@@ -18,8 +19,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	h := handler.New(&handler.Config{
-		Schema: &schema,
+	h := rnshgraphql.NewCORSHandler(&handler.Config{
+		Schema: schema,
 		Pretty: true,
 	})
 
