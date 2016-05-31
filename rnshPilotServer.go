@@ -20,7 +20,7 @@ func main() {
 	}
 
 	h := rnshgraphql.NewCORSHandler(&handler.Config{
-		Schema: schema,
+		Schema: &schema,
 		Pretty: true,
 	})
 
