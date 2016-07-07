@@ -1,10 +1,6 @@
 package services
 
-import (
-	"fmt"
-
-	"github.com/FiviumAustralia/RNSH-Pilot-Server-Go/models"
-)
+import "github.com/FiviumAustralia/RNSH-Pilot-Server-Go/models"
 
 type PatientService interface {
 	GetAllPatients() []models.Patient
@@ -16,13 +12,18 @@ type PatientService interface {
 
 var currentPatientService PatientService
 
-func GetPatientService() *PatientService {
-	// TODO  fancy xml config or something to get different services
-	// for now just get openEHR
+func init() {
 	if currentPatientService == nil {
-		fmt.Println("initing service")
-		currentPatientService = OpenEHRPatientService{"https://ehrscape.code-4-health.org/rest/v1/", "rnsh.mrn", "rnshpilot_c4h", "lIsombRI"}
+		rmps := RabbitMQPatientService{
+			username: "go-graphql-service",
+			password: "go-graphql-service",
+			host:     "localhost",
+			port:     "5672",
+		}
+		currentPatientService = rmps
 	}
+}
 
+func GetPatientService() *PatientService {
 	return &currentPatientService
 }
